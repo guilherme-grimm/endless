@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <title>endless</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230a0a0c'/%3E%3Cpath d='M2 10q3-5 6 0t6 0' stroke='%23c8b89a' fill='none' stroke-width='1.4'/%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        --ink: #e8e6e1;
+        --dim: #8b8781;
+        --font: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      html, body {
+        height: 100%;
+        overflow: hidden;
+        background: #0a0a0c;
+        color: var(--ink);
+        font-family: var(--font);
+        /* The document must never scroll -- the camera is the only thing that moves. */
+        overscroll-behavior: none;
+      }
+
+      #view {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        touch-action: none;
+        cursor: grab;
+      }
+      #view:active { cursor: grabbing; }
+
+      .hud {
+        position: fixed;
+        z-index: 2;
+        font-size: 11px;
+        line-height: 1.65;
+        letter-spacing: 0.02em;
+        pointer-events: none;
+        /* The field behind this can be any brightness, so the overlay carries
+           its own backdrop rather than relying on contrast with the world. */
+        padding: 6px 9px;
+        border-radius: 7px;
+        background: rgba(8, 8, 11, 0.42);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        backdrop-filter: blur(9px) saturate(0.75);
+        -webkit-backdrop-filter: blur(9px) saturate(0.75);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        transition: opacity 0.25s ease;
+      }
+      .hud[hidden] { display: none; }
+
+      #coords {
+        top: max(14px, env(safe-area-inset-top));
+        left: max(14px, env(safe-area-inset-left));
+      }
+      #coords .row { display: flex; gap: 8px; }
+      #coords .k { color: var(--dim); width: 3.5ch; }
+      #coords .v { font-variant-numeric: tabular-nums; }
+
+      #help {
+        bottom: max(14px, env(safe-area-inset-bottom));
+        left: max(14px, env(safe-area-inset-left));
+        color: var(--dim);
+      }
+      #help b { color: var(--ink); font-weight: 500; }
+
+      #stats {
+        top: max(14px, env(safe-area-inset-top));
+        right: max(14px, env(safe-area-inset-right));
+        color: var(--dim);
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+
+      #error {
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        display: none;
+        place-content: center;
+        padding: 32px;
+        text-align: center;
+        font-size: 13px;
+        line-height: 1.7;
+        background: #0a0a0c;
+      }
+      #error.show { display: grid; }
+      #error code {
+        display: block;
+        margin-top: 12px;
+        color: var(--dim);
+        white-space: pre-wrap;
+        text-align: left;
+        font-size: 11px;
+      }
+
+      @media (max-width: 640px) {
+        #help { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="view"></canvas>
+
+    <div class="hud" id="coords">
+      <div class="row"><span class="k">x</span><span class="v" id="cx">0</span></div>
+      <div class="row"><span class="k">y</span><span class="v" id="cy">0</span></div>
+      <div class="row"><span class="k">seed</span><span class="v" id="cseed">—</span></div>
+    </div>
+
+    <div class="hud" id="stats"><span id="fps">—</span></div>
+
+    <div class="hud" id="help">
+      <b>drag</b> / <b>scroll</b> / <b>wasd</b> move &nbsp;·&nbsp; <b>shift</b> faster<br />
+      <b>g</b> go to coordinate &nbsp;·&nbsp; <b>r</b> reseed &nbsp;·&nbsp; <b>n</b> name a seed &nbsp;·&nbsp;
+      <b>0</b> origin<br />
+      <b>f</b> flat &nbsp;·&nbsp; <b>h</b> hide
+    </div>
+
+    <div id="error">
+      <div>
+        <div id="error-msg"></div>
+        <code id="error-detail"></code>
+      </div>
+    </div>
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
