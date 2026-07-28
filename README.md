@@ -11,6 +11,25 @@ bun dev        # http://localhost:3000
 
 `bun run build` emits a static `dist/` (~21 KB, no dependencies).
 
+## Deploying
+
+```
+docker build -t endless .
+docker run -p 8080:80 endless
+```
+
+Bun builds, nginx serves. Nothing runs server-side at all — every pixel is
+generated in the browser — so the runtime stage is a static file server rather
+than an application server, and the image comes out at 75 MB.
+
+The bundle filename carries a content hash, so it is served `immutable` for a
+year while `index.html` is sent `no-cache`; without that split a returning
+visitor would never pick up a deploy.
+
+**On Coolify:** choose the *Dockerfile* build pack and set **Ports Exposes** to
+`80`. TLS is terminated at Coolify's proxy, so the container speaks plain HTTP.
+The `HEALTHCHECK` is already wired up. No environment variables are needed.
+
 ## Controls
 
 | | |

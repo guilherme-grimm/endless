@@ -1,0 +1,14 @@
+# Keep the build context small: node_modules alone is several hundred files,
+# and the builder reinstalls from the lockfile anyway.
+node_modules
+dist
+.git
+.gitignore
+.claude
+.vscode
+.idea
+
+Dockerfile
+.dockerignore
+README.md
+*.log
